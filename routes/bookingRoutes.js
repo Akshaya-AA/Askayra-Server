@@ -2,6 +2,18 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
 
+
+const verifyAdminPassword = (req, res, next) => {
+  const { password } = req.body;
+  const adminPassword = 'askayra830'; 
+
+  if (password === adminPassword) {
+    next(); 
+  } else {
+    res.status(403).json({ message: 'Forbidden: Invalid password' });
+  }
+};
+
 // Create Booking (POST)
 router.post('/', async (req, res) => {
   try {
@@ -34,7 +46,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete Booking (DELETE)
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyAdminPassword, async (req, res) => {
   try {
     await Booking.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Deleted successfully" });
