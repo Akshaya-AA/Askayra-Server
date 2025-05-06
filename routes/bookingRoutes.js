@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
 
-// ✅ Middleware to verify admin password from req.body
 const verifyAdminPassword = (req, res, next) => {
   const { password } = req.body;
   const adminPassword = 'askayra830';
@@ -14,7 +13,7 @@ const verifyAdminPassword = (req, res, next) => {
   }
 };
 
-// ✅ Create Booking
+// ✅ Create Booking (No auth needed)
 router.post('/', async (req, res) => {
   try {
     const newBooking = new Booking(req.body);
@@ -25,8 +24,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// ✅ Get All Bookings
-router.get('/', async (req, res) => {
+// ✅ Get All Bookings (Admin only)
+router.post('/admin-get-all', verifyAdminPassword, async (req, res) => {
   try {
     const bookings = await Booking.find();
     res.status(200).json(bookings);
@@ -35,7 +34,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ✅ Update Booking
+// ✅ Update Booking (No auth)
 router.put('/:id', async (req, res) => {
   try {
     const updated = await Booking.findByIdAndUpdate(req.params.id, req.body, { new: true });
@@ -45,7 +44,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// ✅ Delete Booking with password check
+// ✅ Delete Booking (Admin only)
 router.delete('/:id', verifyAdminPassword, async (req, res) => {
   try {
     await Booking.findByIdAndDelete(req.params.id);
