@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Booking = require('../models/Booking');
-require('dotenv').config(); // 👈 Load .env file
 
 const verifyAdminPassword = (req, res, next) => {
   const { password } = req.body;
-  const adminPassword = process.env.ADMIN_PASSWORD; // 👈 Use env variable
+  const adminPassword = 'askayra830';
 
   if (password === adminPassword) {
     next();
